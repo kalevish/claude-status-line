@@ -66,11 +66,32 @@ after 5 minutes.
    `today / MTD — computing…`; the figures appear once the background scan
    finishes (a second or two).
 
+## Pricing
+
+The today/MTD **cost** figures are estimated from a hard-coded rate table in
+`statusline-usage.py`. The shipped defaults are Anthropic list prices as of
+**June 2026** (USD per million tokens):
+
+| Model family | Input | Output | Cache write (1.25×) | Cache read (0.1×) |
+|--------------|------:|-------:|--------------------:|------------------:|
+| Fable 5      | $10.00 | $50.00 | $12.50 | $1.00 |
+| Opus         |  $5.00 | $25.00 |  $6.25 | $0.50 |
+| Sonnet       |  $3.00 | $15.00 |  $3.75 | $0.30 |
+| Haiku        |  $1.00 |  $5.00 |  $1.25 | $0.10 |
+
+The key is matched as a **substring** of the model id (e.g. `"opus"` matches
+`claude-opus-4-8`). A model whose family isn't in the table contributes **tokens
+but $0 cost** — so an unknown model silently undercounts spend.
+
+> ⚠️ **UPDATE THESE RATES FOR YOUR OWN PLAN BEFORE TRUSTING THE COST.**
+> These are public list prices and **will drift** as Anthropic changes pricing
+> or adds models. Your actual rate may differ (volume discounts, enterprise
+> agreements, a model family not listed). Edit the `RATES` dict at the top of
+> `statusline-usage.py` to match what *you* pay. The token counts are always
+> accurate; the dollar figures are only as good as this table.
+
 ## Customizing
 
-- **Pricing** — edit the `RATES` table in `statusline-usage.py` to match the
-  models and current per-million-token prices you care about. The key is matched
-  as a substring against the model id (e.g. `"opus"` matches `claude-opus-...`).
 - **Colors / layout** — the ANSI color vars and the final two `echo -e` lines in
   `statusline.sh` control the look.
 - **Refresh interval** — the `-mmin +1` (60s) test in `statusline.sh` controls
